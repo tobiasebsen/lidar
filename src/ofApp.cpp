@@ -8,17 +8,6 @@ void ofApp::setup(){
     ofBackground(0);
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    /*fbo.allocate(1280, 800, GL_RGBA);
-    fbo.begin();
-    ofClear(0);
-    fbo.end();
-    
-    shaderMask.load("", "mask.frag");
-    ofLoadImage(texFront, "lines.png");
-    ofLoadImage(texBack, "mural.png");
-    
-    kalman.init(1e-4, 2.);*/
-
     ofLogNotice() << "Connecting to LIDAR ...";
     ofLogVerbose("Connect") << lidar.connect("192.168.0.1", 2111);
     
@@ -93,23 +82,12 @@ void ofApp::setup(){
         canvas->setVisible(false);
     }
     
-    /*uiBrush = new ofxUICanvas(800, 0, 190, 200);
-    uiBrush->setColorBack(ofxUIColor(128, 64));
-    uiBrush->addLabel("BRUSH");
-    uiBrush->addSpacer();
-    uiBrush->addSlider("size", 0.1, 2.0, &brushSize);
-    uiBrush->addSlider("opacity", 0., 1., &brushOpacity);
-    uiBrush->addToggle("show painting", &showImages);
-    uiBrush->addToggle("show points", &showPoints);
-    uiBrush->loadSettings("brush.xml");
-    uiBrush->autoSizeToFitWidgets();
-    canvases.push_back(uiBrush);*/
-    
+ 
     ofxXmlSettings xml("area.xml");
     xml.pushTag("corners");
     int n = xml.getNumTags("corner");
-    area.resize(n);
-    for (int i=0; i<n; i++) {
+    area.resize(4);
+    for (int i=0; i<MIN(n,4); i++) {
         xml.pushTag("corner", i);
         area[i].x = xml.getValue("x", 0.f);
         area[i].y = xml.getValue("y", 0.f);
@@ -144,7 +122,6 @@ void ofApp::exit() {
     uiPlot->saveSettings("plot.xml");
     uiBlobs->saveSettings("blobs.xml");
     uiMapping->saveSettings("mapping.xml");
-    //uiBrush->saveSettings("brush.xml");
 }
 
 //--------------------------------------------------------------
@@ -164,12 +141,6 @@ void ofApp::update(){
         uiAngleRes->setLabel("Angle step: " + ofToString(scan.aDataChannel16.aFlexArrayData[0].DataChannelHdr.uiAngleRes * 0.0001, 2));
 
         ofVec2f window(ofGetWidth(), ofGetHeight());
-        
-        /*mpoints.resize(plot.size());
-        for (int i=0; i<plot.size(); i++) {
-            ofVec2f & point = plot[i];
-            mpoints[i] = window - quad.getMapped(point) * window;
-        }*/
         
         blobs.update(plot, blobThreshold);
         blobs.filterByMass(0., 1000.);
@@ -198,30 +169,6 @@ void ofApp::update(){
                 color = ofColor::red;
         }
         
-        /*fbo.begin();
-        ofFill();
-        ofSetColor(0, 255, 0, brushOpacity*25);
-        ofEnableBlendMode(OF_BLENDMODE_ADD);
-        for (int i=0; i<tracker.size(); i++) {
-            
-            ofxSick::TrackedBlob & blob = tracker[i];
-            float d = blob.mass * brushSize;
-            ofVec2f centerStop = window - quad.getMapped(blob.center) * window;
-            ofVec2f centerStart = blob.center - blob.velocity;
-            centerStart = window - quad.getMapped(centerStart) * window;
-
-            float dist = blob.velocity.length();
-            for (float k=0.; k<dist; k+=1.) {
-                float pct = k/dist;
-                ofVec2f center = centerStart.interpolated(centerStop, pct);
-                ofEllipse(center, d, d);
-            }
-            ofEllipse(centerStop, d, d);
-        }
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        fbo.end();*/
-
-
         fps.end();
     }
 
@@ -290,19 +237,6 @@ void ofApp::draw(){
     }
     if (view) {
         
-        //ofDisableAlphaBlending();
-        
-        /*if (showImages) {
-            
-            shaderMask.begin();
-            shaderMask.setUniformTexture("tex1", texBack, 1);
-            shaderMask.setUniformTexture("mask", fbo.getTextureReference(), 2);
-            texFront.draw(0, 0);
-            shaderMask.end();
-        }
-        else
-            fbo.draw(0, 0);*/
-
         ofVec2f window(ofGetWidth(), ofGetHeight());
 
         if (showPoints) {
@@ -345,11 +279,6 @@ void ofApp::keyPressed(int key){
         for (auto & canvas : canvases)
             canvas->setVisible(showDebug);
     }
-    /*if (key == ' ') {
-        fbo.begin();
-        ofClear(0);
-        fbo.end();
-    }*/
 }
 
 //--------------------------------------------------------------

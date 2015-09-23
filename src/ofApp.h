@@ -74,18 +74,10 @@ public:
     ofxUICanvas *uiPlot;
     ofxUICanvas *uiBlobs;
     ofxUICanvas *uiMapping;
-    //ofxUICanvas *uiBrush;
     vector<ofxUICanvas*> canvases;
     
     ofxUILabel *uiAngleRes;
     ofxUILabel *uiMeasFreq;
-    
-    /*ofFbo fbo;
-    float brushSize;
-    float brushOpacity;
-    ofTexture texFront, texBack;
-    ofShader shaderMask;
-    bool showImages;*/
     
     ofxTuioServer tuio;
     map<int, TuioObject*> cursors;
