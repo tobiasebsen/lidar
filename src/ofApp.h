@@ -55,6 +55,7 @@ public:
     float blobMassMin;
     float blobMassMax;
     float blobGroupDist;
+    float blobShadowAngle;
     float blobTrackTolerance;
     bool filterOutside;
     float blobOffset;

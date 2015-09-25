@@ -62,6 +62,7 @@ void ofApp::setup(){
     uiBlobs->addSlider("min mass", 1., 20., &blobMassMin);
     uiBlobs->addSlider("max mass", 1., 1000., &blobMassMax);
     uiBlobs->addSlider("group distance", 0., 200., &blobGroupDist);
+    uiBlobs->addSlider("showdow threshold", 0., 30., &blobShadowAngle); blobShadowAngle = 10.f;
     uiBlobs->addToggle("filter outside area", &filterOutside); filterOutside = false;
     uiBlobs->addSlider("tracking tolerance", 1., 200., &blobTrackTolerance);
     uiBlobs->loadSettings("blobs.xml");
@@ -165,6 +166,7 @@ void ofApp::update(){
                     mblobs.push_back(blobs[i]);
                 }
             }
+            mblobs.filterShadows(blobShadowAngle);
             tracker.track(mblobs, blobTrackTolerance);
         }
         else
@@ -258,7 +260,7 @@ void ofApp::draw(){
             ofFill();
             //ofDisableAlphaBlending();
             for (int i=0; i<plot.size(); i++) {
-                ofVec2f point = window - quad.getMapped(plot[i]) * window;
+                ofVec2f point = quad.getMapped(plot[i]) * window;
                 ofSetColor(colors[i]);
                 ofEllipse(point, 10, 10);
             }
@@ -269,7 +271,7 @@ void ofApp::draw(){
             ofSetColor(255);
             for (int i=0; i<tracker.size(); i++) {
                 ofxSick::TrackedBlob & blob = tracker[i];
-                ofVec2f center = window - quad.getMapped(blob.center) * window;
+                ofVec2f center = quad.getMapped(blob.center) * window;
                 ofEllipse(center, blob.mass, blob.mass);
             }
         }
@@ -377,13 +379,13 @@ void ofApp::uiEvent(ofxUIEventArgs &args) {
 void ofApp::blobAdded(ofxSick::TrackedBlob &blob) {
     ofLog() << "New blob: " << blob.uid;
     ofVec2f window(ofGetWidth(), ofGetHeight());
-    ofVec2f center = window - quad.getMapped(blob.center) * window;
+    ofVec2f center = quad.getMapped(blob.center) * window;
     cursors[blob.uid] = tuio.addObject(blob.uid, center.x, center.y, blob.mass);
 }
 //--------------------------------------------------------------
 void ofApp::blobUpdated(ofxSick::TrackedBlob &blob) {
     ofVec2f window(ofGetWidth(), ofGetHeight());
-    ofVec2f center = window - quad.getMapped(blob.center) * window;
+    ofVec2f center = quad.getMapped(blob.center) * window;
     tuio.updateObject(cursors[blob.uid], center.x, center.y, blob.mass);
 }
 //--------------------------------------------------------------
