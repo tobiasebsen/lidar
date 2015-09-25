@@ -77,9 +77,11 @@ void ofApp::setup(){
     uiMapping->autoSizeToFitWidgets();
     canvases.push_back(uiMapping);
     
+    showDebug = true;
+
     for (auto & canvas : canvases) {
         canvas->setColorBack(ofxUIColor(128, 64));
-        canvas->setVisible(false);
+        canvas->setVisible(showDebug);
     }
     
  
@@ -87,18 +89,27 @@ void ofApp::setup(){
     xml.pushTag("corners");
     int n = xml.getNumTags("corner");
     area.resize(4);
-    for (int i=0; i<MIN(n,4); i++) {
-        xml.pushTag("corner", i);
-        area[i].x = xml.getValue("x", 0.f);
-        area[i].y = xml.getValue("y", 0.f);
-        quad.setCorner(i, area[i]);
-        xml.popTag();
+    if (n == 4) {
+        for (int i=0; i<n; i++) {
+            xml.pushTag("corner", i);
+            area[i].x = xml.getValue("x", 0.f);
+            area[i].y = xml.getValue("y", 0.f);
+            quad.setCorner(i, area[i]);
+            xml.popTag();
+        }
+    }
+    else {
+        area[0].set(-1100, 1000);
+        area[1].set(-1000, 10);
+        area[2].set(1000, 50);
+        area[3].set(1100, 1000);
+        for (int i=0; i<4; i++)
+            quad.setCorner(i, area[i]);
     }
     xml.popTag();
     
     currentCorner = -1;
     view = 0;
-    showDebug = false;
     showPoints = true;
 }
 
@@ -204,7 +215,7 @@ void ofApp::draw(){
         ofSetColor(255);
         
         if (showBlobs) {
-            tracker.draw();
+            tracker.draw(true);
             //blobs.draw();
         }
         
@@ -216,6 +227,10 @@ void ofApp::draw(){
             glDrawArrays(GL_LINE_LOOP, 0, area.size());
             glDrawArrays(GL_POINTS, 0, area.size());
             glDisableClientState(GL_VERTEX_ARRAY);
+            ofDrawBitmapString("0,0", area[0]);
+            ofDrawBitmapString("0,1", area[1]);
+            ofDrawBitmapString("1,1", area[2]);
+            ofDrawBitmapString("1,0", area[3]);
             if (showDims) {
                 ofVec2f bottom = area[0] - area[3];
                 ofDrawBitmapString(ofToString(bottom.length()*0.1,1) + " cm", area[3] + bottom/2 + ofVec2f(0, 0));
@@ -259,6 +274,10 @@ void ofApp::draw(){
             }
         }
     }
+    
+    ofVec2f mouse = ofVec2f(ofGetMouseX(), ofGetMouseY());
+    ofVec2f mm = quad.getMapped(pointOnPlane);
+    ofDrawBitmapString(ofToString(mm), mouse);
     
     if (showDebug) {
         fps.draw(20, ofGetWindowHeight()-20, "LIDAR");

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "ofxSick::Plot::update(ofxSick::Scan&amp;, bool, bool, float, bool):Plot.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofxSick::Blobs::update(ofxSick::Plot&amp;, float, int):Blobs.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofApp::mousePressed(int, int, int):ofApp.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofApp::setup():ofApp.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofApp::AsyncCallback(SDecodedAnswer const&amp;, CBinaryDataStream&amp;, CDeserializer&amp;):ofApp.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofxSick::Lms100::update():Lms100.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "ofApp::update():ofApp.cpp">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
